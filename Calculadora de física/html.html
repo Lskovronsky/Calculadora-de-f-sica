@@ -1,59 +1,103 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <link rel="stylesheet" href="caminho/para/seu/arquivo.css">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Calculadora de Força Magnética e Força Elétrica</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-        }
-
-        input, button {
-            margin-bottom: 10px;
-        }
-    </style>
+    <link rel="stylesheet" href="css.css">
 </head>
 <body>
 
     <h1>Calculadora de Força Magnética e Força Elétrica</h1>
 
-    <label for="carga1">Carga 1 (em Coulombs): </label>
-    <input type="text" id="carga1">
+    <h2>Força Magnética:</h2>
+    <label for="current">Magnitude Atual (I, em Amperes): </label>
+    <input type="text" id="current">
 
-    <label for="carga2">Carga 2 (em Coulombs): </label>
-    <input type="text" id="carga2">
+    <label for="length">Comprimento da Haste (L, em metros): </label>
+    <input type="text" id="length">
 
-    <label for="distancia">Distância (em metros): </label>
-    <input type="text" id="distancia">
+    <label for="magneticField">Campo Magnético (B, em Teslas): </label>
+    <input type="text" id="magneticField">
+
+    <label for="theta">Ângulo Theta (θ, em graus): </label>
+    <input type="text" id="theta">
 
     <button onclick="calcularForcaMagnetica()">Calcular Força Magnética</button>
+
+    <h2>Força Elétrica:</h2>
+    <label for="chargeType">Cargas são:</label>
+    <select id="chargeType" onchange="handleChargeTypeChange()">
+        <option value="notEqual" selected>Não Iguais</option>
+        <option value="equal">Iguais</option>
+    </select>
+
+    <div id="chargeInputs">
+        <label for="charge1">Carga 1 (q1, em Coulombs): </label>
+        <input type="text" id="charge1">
+
+        <label for="charge2">Carga 2 (q2, em Coulombs): </label>
+        <input type="text" id="charge2">
+    </div>
+
+    <label for="distance">Distância (r, em metros): </label>
+    <input type="text" id="distance">
+
     <button onclick="calcularForcaEletrica()">Calcular Força Elétrica</button>
 
     <h2>Resultados:</h2>
     <p id="resultado"></p>
 
     <script>
+        function handleChargeTypeChange() {
+            var chargeType = document.getElementById("chargeType").value;
+            var chargeInputs = document.getElementById("chargeInputs");
+
+            if (chargeType === "equal") {
+                chargeInputs.innerHTML = '<label for="charge">Carga (q1 & q2, em Coulombs): </label>';
+                chargeInputs.innerHTML += '<input type="text" id="charge">';
+            } else {
+                chargeInputs.innerHTML = '<label for="charge1">Carga 1 (q1, em Coulombs): </label>';
+                chargeInputs.innerHTML += '<input type="text" id="charge1">';
+                chargeInputs.innerHTML += '<label for="charge2">Carga 2 (q2, em Coulombs): </label>';
+                chargeInputs.innerHTML += '<input type="text" id="charge2">';
+            }
+        }
+
         function calcularForcaMagnetica() {
-            var carga1 = document.getElementById("carga1").value;
-            var carga2 = document.getElementById("carga2").value;
-            var distancia = document.getElementById("distancia").value;
+            var current = document.getElementById("current").value;
+            var length = document.getElementById("length").value;
+            var magneticField = document.getElementById("magneticField").value;
+            var theta = document.getElementById("theta").value;
 
-            var forcaMagnetica = (9 * Math.pow(10, 9) * carga1 * carga2) / Math.pow(distancia, 2);
+            theta = (Math.PI / 180) * theta; // Convertendo theta para radianos
 
-            document.getElementById("resultado").innerHTML = "A força magnética é " + forcaMagnetica.toFixed(2) + " Newtons.";
+            var forceMagnetica = current * length * magneticField * Math.sin(theta);
+
+            document.getElementById("resultado").innerHTML = "A força magnética é calculada usando a equação: F = I * L * B * sin(θ)";
+            document.getElementById("resultado").innerHTML += "<br>";
+            document.getElementById("resultado").innerHTML += "A força magnética é " + forceMagnetica.toFixed(2) + " Newtons.";
         }
 
         function calcularForcaEletrica() {
-            var carga1 = document.getElementById("carga1").value;
-            var carga2 = document.getElementById("carga2").value;
-            var distancia = document.getElementById("distancia").value;
+            var chargeType = document.getElementById("chargeType").value;
+            var chargeInputs = document.getElementById("chargeInputs");
+            var distance = document.getElementById("distance").value;
 
-            var forcaEletrica = (8.99 * Math.pow(10, 9) * carga1 * carga2) / Math.pow(distancia, 2);
+            var forceEletrica;
 
-            document.getElementById("resultado").innerHTML = "A força elétrica é " + forcaEletrica.toFixed(2) + " Newtons.";
+            if (chargeType === "equal") {
+                var charge = document.getElementById("charge").value;
+                forceEletrica = (8.99 * Math.pow(10, 9) * Math.pow(charge, 2)) / Math.pow(distance, 2);
+                document.getElementById("resultado").innerHTML = "As cargas são iguais (Carga q1 & q2)";
+            } else {
+                var charge1 = document.getElementById("charge1").value;
+                var charge2 = document.getElementById("charge2").value;
+                forceEletrica = (8.99 * Math.pow(10, 9) * charge1 * charge2) / Math.pow(distance, 2);
+                document.getElementById("resultado").innerHTML = "A força elétrica é calculada usando a equação: Fe = k * (q1 * q2) / r^2";
+                document.getElementById("resultado").innerHTML += "<br>";
+                document.getElementById("resultado").innerHTML += "A força elétrica é " + forceEletrica.toFixed(2) + " Newtons.";
+            }
         }
     </script>
 
